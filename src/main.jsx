@@ -1,7 +1,17 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.jsx";
+import { ArweaveWalletKit } from "@arweave-wallet-kit/react";
+import ArConnectStrategy from "@arweave-wallet-kit/arconnect-strategy";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
+import Home from "./pages/Home.jsx";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Home />,
+  },
+]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -17,7 +27,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         strategies: [new ArConnectStrategy()],
       }}
     >
-      <App />
+      <RouterProvider router={router} />
     </ArweaveWalletKit>
   </React.StrictMode>
 );
