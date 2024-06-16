@@ -5,11 +5,17 @@ import ArConnectStrategy from "@arweave-wallet-kit/arconnect-strategy";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import Home from "./pages/Home.jsx";
+import Projects from "./pages/Projects.jsx";
+import Header from "./components/Header.jsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
+  },
+  {
+    path: "/projects",
+    element: <Projects />,
   },
 ]);
 
