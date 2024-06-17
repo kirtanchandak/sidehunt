@@ -51,6 +51,7 @@ function Projects() {
 
     setIsFetching(false);
   };
+  console.log(projects);
 
   useEffect(() => {
     getImages();
@@ -62,7 +63,7 @@ function Projects() {
   return (
     <>
       <Header />
-      <div className="pt-5 bg-gray-900 md:h-screen w-full md:px-12 px-6">
+      <div className="pt-5 md:h-screen w-full md:px-12 px-6">
         {!connected ? (
           <div className="flex items-center justify-center h-screen">
             <div className="text-center">
@@ -92,9 +93,12 @@ function Projects() {
           </div>
         ) : (
           <>
-            <button className="bg-[#4678F4] py-3 px-3 rounded-2xl text-white font-medium">
+            <a
+              href="/new-project"
+              className="bg-[#4678F4] py-3 px-3 rounded-2xl text-white font-medium"
+            >
               Post a Project
-            </button>
+            </a>
             <div className="grid grid-cols-1 md:grid-cols-4">
               {projects?.map((project) => (
                 <div
