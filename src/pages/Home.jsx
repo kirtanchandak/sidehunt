@@ -1,5 +1,6 @@
 import React from "react";
 import Header from "../components/Header";
+import { ConnectButton } from "@arweave-wallet-kit/react";
 
 function Home() {
   return (
@@ -25,12 +26,12 @@ function Home() {
                 View Projects
               </a>
 
-              <a
-                className="block w-full rounded border border-blue-600 px-12 py-3 text-sm font-medium text-white hover:bg-blue-600 focus:outline-none focus:ring active:bg-blue-500 sm:w-auto"
-                href="#"
-              >
-                Connect Wallet
-              </a>
+              <ConnectButton
+                profileModal={true}
+                showBalance={false}
+                showProfilePicture={true}
+                accent="#4678F4"
+              />
             </div>
           </div>
         </div>

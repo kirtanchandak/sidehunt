@@ -109,3 +109,15 @@ Handlers.add("sidehunt.Post",
     end
   end
 )
+
+Handlers.add("sidehunt.Projects", function (msg)
+  return msg.Action == "Get-Projects"
+end,
+function (msg)
+  local posts = dbAdmin:exec([[
+    select p.ID, p.Title, a.Name, p.Body as "Body" from Projects p LEFT OUTER JOIN Users a ON p.PID = a.PID;
+  ]])
+  print("Listing " .. #posts .. " posts")
+  Send({Target = msg.From, Action = "sidehunt.Projects", Data = require('json').encode(posts)})
+end
+)
