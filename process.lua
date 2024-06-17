@@ -121,3 +121,13 @@ function (msg)
   Send({Target = msg.From, Action = "sidehunt.Projects", Data = require('json').encode(posts)})
 end
 )
+
+Handlers.add("sidehunt.Users", function (msg)
+  return msg.Action == "UserList"
+end,
+function (msg)
+  local authors = dbAdmin:exec([[SELECT PID FROM Users]])
+  print("Listing " .. #authors .. " authors")
+  Send({Target = msg.From, Action = "sidehunt.Users", Data = require('json').encode(authors)})
+end
+)
