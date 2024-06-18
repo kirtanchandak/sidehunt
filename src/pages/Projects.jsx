@@ -7,7 +7,7 @@ import { ConnectButton } from "@arweave-wallet-kit/react";
 
 function Projects() {
   const { connected } = useConnection();
-  const processId = "oL2_pYsUlF9UYkEo_TRgFc4rS7eJuxS6rQOxHd0rCX4";
+  const processId = "AASDWjVA3cL_jqHmsdj7IVLvbdo0vMme-u6HB87abcE";
   const [isFetching, setIsFetching] = useState(false);
   const [projects, setProjects] = useState(null);
   const [img, setImg] = useState("");

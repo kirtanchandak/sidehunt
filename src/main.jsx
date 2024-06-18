@@ -8,6 +8,7 @@ import Home from "./pages/Home.jsx";
 import Projects from "./pages/Projects.jsx";
 import NewProject from "./pages/NewProject.jsx";
 import Layout from "./components/Layout.jsx";
+import { Toaster } from "react-hot-toast";
 
 const router = createBrowserRouter([
   {
@@ -45,6 +46,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       }}
     >
       <RouterProvider router={router} />
+      <Toaster />
     </ArweaveWalletKit>
   </React.StrictMode>
 );

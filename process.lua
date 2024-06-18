@@ -8,12 +8,7 @@ return "OK"
 USERS = [[
   CREATE TABLE IF NOT EXISTS Users (
     PID TEXT PRIMARY KEY,
-    username TEXT NOT NULL UNIQUE,
-    Name TEXT,
-    bio TEXT,
-    profile_picture_url TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    Name TEXT, 
   );
 ]]
 
@@ -22,6 +17,7 @@ PROJECTS = [[
     ID TEXT PRIMARY KEY,
     PID TEXT,
     Title TEXT,
+    Tagline TEXT,
     Body TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -29,8 +25,8 @@ PROJECTS = [[
   );
 ]]
 
-UPVOTES = [[
-  CREATE TABLE IF NOT EXISTS Upvotes (
+LIKES = [[
+  CREATE TABLE IF NOT EXISTS Likes (
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
     PostID TEXT,
     PID TEXT,
@@ -43,7 +39,7 @@ UPVOTES = [[
 function InitDb() 
   db:exec(USERS)
   db:exec(PROJECTS)
-  db:exec(UPVOTES)
+  db:exec(LIKES)
   return dbAdmin:tables()
 end
 
@@ -66,12 +62,9 @@ Handlers.add("sidehunt.Register",
     end
 
     local Name = msg.Name or 'anon'
-    -- local username = msg.username or 'anon'
-    -- local bio = msg.bio or 'anon'
-    -- local profilePic = msg.profilePic or 'anon'
     local ins_r = dbAdmin:exec(string.format([[
       INSERT INTO Users (PID, Name, username, bio, profile_picture_url) VALUES ("%s", "%s", "%s", "%s", "%s");
-    ]], msg.From, Name, "usrname", "bio", "profilePic"))
+    ]], msg.From, Name))
     
     print(ins_r)
 
@@ -98,8 +91,8 @@ Handlers.add("sidehunt.Post",
     if author then
       -- add message
       dbAdmin:exec(string.format([[
-        INSERT INTO Projects (ID, PID, Title, Body) VALUES ("%s", "%s", "%s", "%s");
-      ]], msg.Id, author.PID, msg.Title, msg.Data ))
+        INSERT INTO Projects (ID, PID, Title, Body, Tagline) VALUES ("%s", "%s", "%s", "%s", "%s", "%s");
+      ]], msg.Id, author.PID, msg.Title, msg.ProjectUrl, msg.Tagline. msg.Data ))
       Send({Target = msg.From, Data = "Project Posted."})
       print("New Project Posted")
       return "ok"

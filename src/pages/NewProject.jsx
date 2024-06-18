@@ -8,13 +8,15 @@ import {
   dryrun,
 } from "@permaweb/aoconnect";
 import MDEditor from "@uiw/react-md-editor";
+import toast from "react-hot-toast";
 
 function NewProject() {
   const { connected } = useConnection();
-  const processId = "oL2_pYsUlF9UYkEo_TRgFc4rS7eJuxS6rQOxHd0rCX4";
+  const processId = "AASDWjVA3cL_jqHmsdj7IVLvbdo0vMme-u6HB87abcE";
   const [isFetching, setIsFetching] = useState(false);
   const [authorList, setAuthorList] = useState([]);
   const [value, setValue] = React.useState("**Hello world!!!**");
+  const [name, setName] = useState("");
 
   const activeAddress = useActiveAddress();
 
@@ -43,24 +45,35 @@ function NewProject() {
   };
 
   const registerAuthor = async () => {
-    const res = await message({
-      process: processId,
-      tags: [{ name: "Action", value: "Register" }],
-      data: "",
-      signer: createDataItemSigner(window.arweaveWallet),
-    });
+    const toastId = toast.loading("Registering...");
+    try {
+      const res = await message({
+        process: processId,
+        tags: [{ name: "Action", value: "Register" }],
+        data: JSON.stringify({ name: name }),
+        signer: createDataItemSigner(window.arweaveWallet),
+      });
 
-    console.log("Register Author result", result);
+      console.log("Register Author result", res); // Changed result to res
 
-    const registerResult = await result({
-      process: processId,
-      message: res,
-    });
+      const registerResult = await result({
+        process: processId,
+        message: res,
+      });
 
-    console.log("Registered successfully", registerResult);
+      console.log("Registered successfully", registerResult);
 
-    if (registerResult[0].Messages[0].Data === "Successfully Registered.") {
-      syncAllAuthors();
+      if (registerResult[0].Messages[0].Data === "Successfully Registered.") {
+        syncAllAuthors();
+        toast.success("Successfully registered!");
+      } else {
+        toast.error("Registration failed.");
+      }
+    } catch (error) {
+      toast.error("Registration failed.");
+      console.log(error);
+    } finally {
+      toast.dismiss(toastId);
     }
   };
 
@@ -80,6 +93,9 @@ function NewProject() {
   const [desc, setDesc] = useState("");
   const [title, setTitle] = useState("");
   const [projectUrl, setProjectUrl] = useState("");
+  const projectSuccess = () => toast.success("Project Created successfully!!");
+  const projectFail = () =>
+    toast.error("Something went wrong, please try again!");
 
   const handlePostProject = async (e) => {
     e.preventDefault();
@@ -88,6 +104,8 @@ function NewProject() {
     if (!connected) {
       return;
     }
+
+    const toastId = toast.loading("Submitting...");
 
     setIsPosting(true);
 
@@ -111,16 +129,20 @@ function NewProject() {
         message: res,
       });
 
-      console.log("Post Created successfully", postResult);
+      projectSuccess();
 
-      setDraftContent("");
+      setDesc("");
       setTitle("");
+      setProjectUrl("");
     } catch (error) {
+      projectFail();
       console.log(error);
     }
 
+    toast.dismiss(toastId);
     setIsPosting(false);
   };
+
   return (
     <>
       {authorList.some((author) => author.PID === activeAddress) ? (
@@ -130,7 +152,7 @@ function NewProject() {
             <form className="">
               <div className="mb-5">
                 <label
-                  for="base-input"
+                  htmlFor="base-input"
                   className="block mb-2 text-sm font-medium text-white"
                 >
                   Title
@@ -140,20 +162,21 @@ function NewProject() {
                   id="base-input"
                   className="bg-gray-50 border border-gray-300  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   onChange={(e) => setTitle(e.target.value)}
+                  value={title}
                 />
               </div>
 
               <div className="mb-5">
                 <label
-                  for="large-input"
-                  className="block mb-2 text-sm font-medium text-white  "
+                  htmlFor="large-input"
+                  className="block mb-2 text-sm font-medium text-white"
                 >
                   Description
                 </label>
                 <div className="container">
                   <MDEditor
                     value={desc}
-                    height="280px"
+                    height={280}
                     minHeight={100}
                     visibleDragbar={false}
                     onChange={setDesc}
@@ -162,7 +185,7 @@ function NewProject() {
               </div>
               <div>
                 <label
-                  for="small-input"
+                  htmlFor="small-input"
                   className="block mb-2 text-sm font-medium text-white"
                 >
                   Github URL or Deployed Link
@@ -172,14 +195,16 @@ function NewProject() {
                   id="small-input"
                   className="block w-full p-2  border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   onChange={(e) => setProjectUrl(e.target.value)}
+                  value={projectUrl}
                 />
               </div>
               <button
                 type="submit"
                 className="text-white p-2 bg-[#4678F4] rounded-lg mt-3"
                 onClick={handlePostProject}
+                disabled={isPosting}
               >
-                Submit
+                {isPosting ? "Submitting..." : "Submit"}
               </button>
             </form>
           </div>
