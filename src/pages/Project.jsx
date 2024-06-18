@@ -65,7 +65,7 @@ function Project() {
                         {postContent?.Title}
                       </h2>
                       <a
-                        href={postContent.ProjectUrl}
+                        href={postContent?.ProjectUrl}
                         className="text-white bg-[#4678F4] p-2 rounded-md"
                       >
                         View on Github
