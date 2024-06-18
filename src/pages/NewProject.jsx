@@ -1,254 +1,91 @@
-import React, { useState, useEffect } from "react";
-import Header from "../components/Header";
-import { useActiveAddress, useConnection } from "@arweave-wallet-kit/react";
-import {
-  createDataItemSigner,
-  message,
-  result,
-  dryrun,
-} from "@permaweb/aoconnect";
-import MDEditor from "@uiw/react-md-editor";
-import toast from "react-hot-toast";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useConnection } from "@arweave-wallet-kit/react";
+import { dryrun } from "@permaweb/aoconnect";
+import Markdown from "react-markdown";
+import { FaGithub } from "react-icons/fa";
 
-function NewProject() {
+function Project() {
   const { connected } = useConnection();
   const processId = "AASDWjVA3cL_jqHmsdj7IVLvbdo0vMme-u6HB87abcE";
   const [isFetching, setIsFetching] = useState(false);
-  const [authorList, setAuthorList] = useState([]);
-  const [value, setValue] = React.useState("**Hello world!!!**");
-  const [name, setName] = useState("");
-  const [tagline, setTagline] = useState("");
+  const [postContent, setPostContent] = useState();
+  const { id } = useParams();
 
-  const activeAddress = useActiveAddress();
-
-  const syncAllAuthors = async () => {
+  const syncAllPosts = async () => {
     if (!connected) {
       return;
     }
 
     try {
-      const res = await dryrun({
+      const result = await dryrun({
         process: processId,
         data: "",
-        tags: [{ name: "Action", value: "UserList" }],
+        tags: [
+          { name: "Action", value: "Get-Project" },
+          { name: "Project-Id", value: id },
+        ],
         anchor: "1234",
       });
-      console.log("Dry run Author result", res);
-      const filteredResult = res.Messages.map((message) => {
-        const parsedData = JSON.parse(message.Data);
-        return parsedData;
-      });
-      console.log("Filtered Author result", filteredResult);
-      setAuthorList(filteredResult[0]);
+      console.log("Dry run result", result);
+      const filteredResult = JSON.parse(result.Messages[0].Data);
+      console.log("Filtered result", filteredResult);
+      setPostContent(filteredResult[0]);
     } catch (error) {
       console.log(error);
-    }
-  };
-
-  const registerAuthor = async () => {
-    const toastId = toast.loading("Registering...");
-    try {
-      const res = await message({
-        process: processId,
-        tags: [{ name: "Action", value: "Register" }],
-        data: JSON.stringify({ name: name }),
-        signer: createDataItemSigner(window.arweaveWallet),
-      });
-
-      console.log("Register Author result", res); // Changed result to res
-
-      const registerResult = await result({
-        process: processId,
-        message: res,
-      });
-
-      console.log("Registered successfully", registerResult);
-
-      if (registerResult[0].Messages[0].Data === "Successfully Registered.") {
-        syncAllAuthors();
-        toast.success("Successfully registered!");
-      } else {
-        toast.error("Registration failed.");
-      }
-    } catch (error) {
-      toast.error("Registration failed.");
-      console.log(error);
-    } finally {
-      toast.dismiss(toastId);
     }
   };
 
   useEffect(() => {
     setIsFetching(true);
-    syncAllAuthors();
-    console.log("This is active address", activeAddress);
-    console.log(
-      "Includes author",
-      authorList.some((author) => author.PID === activeAddress)
-    );
-
+    syncAllPosts();
     setIsFetching(false);
-  }, [connected]);
-
-  const [isPosting, setIsPosting] = useState(false);
-  const [desc, setDesc] = useState("");
-  const [title, setTitle] = useState("");
-  const [projectUrl, setProjectUrl] = useState("");
-  const projectSuccess = () => toast.success("Project Created successfully!!");
-  const projectFail = () =>
-    toast.error("Something went wrong, please try again!");
-
-  const handlePostProject = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (!connected) {
-      return;
-    }
-
-    const toastId = toast.loading("Submitting...");
-
-    setIsPosting(true);
-
-    try {
-      const res = await message({
-        process: processId,
-        tags: [
-          { name: "Action", value: "Create-Project" },
-          { name: "Content-Type", value: "text/html" },
-          { name: "Title", value: title },
-          { name: "ProjectUrl", value: projectUrl },
-          { name: "Tagline", value: tagline },
-        ],
-        data: desc,
-        signer: createDataItemSigner(window.arweaveWallet),
-      });
-
-      console.log("Post result", res);
-
-      const postResult = await result({
-        process: processId,
-        message: res,
-      });
-
-      projectSuccess();
-
-      setDesc("");
-      setTitle("");
-      setProjectUrl("");
-    } catch (error) {
-      projectFail();
-      console.log(error);
-    }
-
-    toast.dismiss(toastId);
-    setIsPosting(false);
-  };
+  }, [connected, id]); // Include `id` in dependencies to refetch when `id` changes
 
   return (
-    <>
-      {authorList.some((author) => author.PID === activeAddress) ? (
-        <div>
-          <h1 className="text-2xl text-white text-center mt-10">New Project</h1>
-          <div className="flex justify-center items-center">
-            <form className="">
-              <div className="mb-5">
-                <label
-                  htmlFor="base-input"
-                  className="block mb-2 text-sm font-medium text-white"
-                >
-                  Title
-                </label>
-                <input
-                  type="text"
-                  id="base-input"
-                  className="bg-gray-50 border border-gray-300  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  onChange={(e) => setTitle(e.target.value)}
-                  value={title}
-                />
-              </div>
-
-              <div className="mb-5">
-                <label
-                  htmlFor="base-input"
-                  className="block mb-2 text-sm font-medium text-white"
-                >
-                  Tagline
-                </label>
-                <input
-                  type="text"
-                  id="base-input"
-                  className="bg-gray-50 border border-gray-300  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  onChange={(e) => setTagline(e.target.value)}
-                  value={tagline}
-                />
-              </div>
-
-              <div className="mb-5">
-                <label
-                  htmlFor="large-input"
-                  className="block mb-2 text-sm font-medium text-white"
-                >
-                  Description
-                </label>
-                <div className="container">
-                  <MDEditor
-                    value={desc}
-                    height={280}
-                    minHeight={100}
-                    visibleDragbar={false}
-                    onChange={setDesc}
-                  />
-                </div>
-              </div>
-              <div>
-                <label
-                  htmlFor="small-input"
-                  className="block mb-2 text-sm font-medium text-white"
-                >
-                  Github URL or Deployed Link
-                </label>
-                <input
-                  type="text"
-                  id="small-input"
-                  className="block w-full p-2  border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  onChange={(e) => setProjectUrl(e.target.value)}
-                  value={projectUrl}
-                />
-              </div>
-              <button
-                type="submit"
-                className="text-white p-2 bg-[#4678F4] rounded-lg mt-3"
-                onClick={handlePostProject}
-                disabled={isPosting}
-              >
-                {isPosting ? "Submitting..." : "Submit"}
-              </button>
-            </form>
-          </div>
+    <div className="container mx-auto px-4 py-8">
+      {isFetching ? (
+        <div className="flex items-center justify-center h-screen">
+          <p className="text-xl font-semibold text-white">Loading...</p>
         </div>
       ) : (
-        <div className="flex flex-col">
-          <h1 className="text-xl text-center text-white">
-            You need to make sure if you are registered user before you submit a
-            project
-          </h1>
-          <input
-            type="text"
-            id="base-input"
-            className="bg-gray-50 border border-gray-300  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            onChange={(e) => setName(e.target.value)}
-            value={name}
-          />
+        <div className="flex flex-col items-center justify-center md:flex-row">
           <div>
-            <button className="bg-[#4678F4] p-2" onClick={registerAuthor}>
-              Register
-            </button>
+            <div className="flex items-center">
+              <h2 className="lg:text-5xl font-bold text-white mr-4">
+                {postContent?.Title}
+              </h2>
+              {!connected && (
+                <p className="text-red-500 font-semibold">
+                  Connect your wallet to view content.
+                </p>
+              )}
+              {connected && (
+                <a
+                  href={postContent?.ProjectUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white px-3 flex items-center bg-[#4678F4] rounded-md hover:bg-[#365bb3] cursor-pointer"
+                >
+                  <FaGithub className="w-5 h-5 mr-2" />
+                  View on GitHub
+                </a>
+              )}
+            </div>
+
+            <div className="pt-3">
+              <h1 className="text-xl font-semibold text-white mt-4">
+                Description:
+              </h1>
+              <div className="mt-3 font-medium text-white">
+                <Markdown>{postContent?.Body}</Markdown>
+              </div>
+            </div>
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
 
-export default NewProject;
+export default Project;
