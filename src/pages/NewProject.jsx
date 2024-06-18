@@ -7,12 +7,14 @@ import {
   result,
   dryrun,
 } from "@permaweb/aoconnect";
+import MDEditor from "@uiw/react-md-editor";
 
 function NewProject() {
   const { connected } = useConnection();
   const processId = "oL2_pYsUlF9UYkEo_TRgFc4rS7eJuxS6rQOxHd0rCX4";
   const [isFetching, setIsFetching] = useState(false);
   const [authorList, setAuthorList] = useState([]);
+  const [value, setValue] = React.useState("**Hello world!!!**");
 
   const activeAddress = useActiveAddress();
 
@@ -121,7 +123,6 @@ function NewProject() {
   };
   return (
     <>
-      <Header />
       {authorList.some((author) => author.PID === activeAddress) ? (
         <div>
           <h1 className="text-2xl text-white text-center mt-10">New Project</h1>
@@ -141,6 +142,7 @@ function NewProject() {
                   onChange={(e) => setTitle(e.target.value)}
                 />
               </div>
+
               <div className="mb-5">
                 <label
                   for="large-input"
@@ -148,12 +150,15 @@ function NewProject() {
                 >
                   Description
                 </label>
-                <input
-                  type="text"
-                  id="large-input"
-                  className="block w-full p-4  border border-gray-300 rounded-lg bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  onChange={(e) => setDesc(e.target.value)}
-                />
+                <div className="container">
+                  <MDEditor
+                    value={desc}
+                    height="280px"
+                    minHeight={100}
+                    visibleDragbar={false}
+                    onChange={setDesc}
+                  />
+                </div>
               </div>
               <div>
                 <label

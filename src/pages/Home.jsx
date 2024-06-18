@@ -5,7 +5,6 @@ import { ConnectButton } from "@arweave-wallet-kit/react";
 function Home() {
   return (
     <div>
-      <Header />
       <section className="text-white font-poppins h-screen">
         <div className="mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-center">
           <div className="mx-auto max-w-3xl text-center">

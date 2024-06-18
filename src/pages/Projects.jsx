@@ -62,7 +62,6 @@ function Projects() {
 
   return (
     <>
-      <Header />
       <div className="pt-5 md:h-screen w-full md:px-12 px-6">
         {!connected ? (
           <div className="flex items-center justify-center h-screen">
