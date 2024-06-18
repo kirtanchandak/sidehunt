@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useConnection } from "@arweave-wallet-kit/react";
 import { dryrun } from "@permaweb/aoconnect";
 import Markdown from "react-markdown";
-import { FaGithub } from "react-icons/fa6";
+import { FaGithub } from "react-icons/fa";
 
 function Project() {
   const { connected } = useConnection();
@@ -40,37 +40,53 @@ function Project() {
     setIsFetching(true);
     syncAllPosts();
     setIsFetching(false);
-  }, [connected]);
+  }, [connected, id]); // Include `id` in dependencies to refetch when `id` changes
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col items-center justify-center md:flex-row">
-        <div>
-          <div className="flex">
-            <h2 className="lg:text-5xl font-[700] text-white mr-4">
-              {postContent?.Title}
-            </h2>
-            <a
-              href={postContent?.ProjectUrl}
-              target="_blank"
-              className="text-white px-3 flex items-center bg-[#4678F4] rounded-md hover:bg-[#365bb3] cursor-pointer"
-            >
-              <FaGithub className="w-5 h-5 mr-2" />
-              View on GitHub
-            </a>
-          </div>
+      {isFetching ? (
+        <div className="flex items-center justify-center h-screen">
+          <p className="text-xl font-semibold text-white">Loading...</p>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center md:flex-row">
+          <div>
+            <div className="items-center">
+              {!connected && (
+                <p className="text-red-500 font-semibold">
+                  Connect your wallet to view content.
+                </p>
+              )}
+              {connected && (
+                <>
+                  <div>
+                    <div>
+                      <h2 className="lg:text-5xl font-bold text-white mr-4 mb-4">
+                        {postContent?.Title}
+                      </h2>
+                      <a
+                        href={postContent.ProjectUrl}
+                        className="text-white bg-[#4678F4] p-2 rounded-md"
+                      >
+                        View on Github
+                      </a>
+                    </div>
 
-          <div className="pt-3">
-            <h1 className="text-xl font-semibold text-white mt-4">
-              Description:
-            </h1>{" "}
-            {/* Added margin-top for spacing */}
-            <div className="mt-3 font-medium text-white">
-              <Markdown>{postContent?.Body}</Markdown>
+                    <div className="pt-3">
+                      <h1 className="text-xl font-semibold text-white mt-4">
+                        Description:
+                      </h1>
+                    </div>
+                    <div className="mt-3 font-medium text-white">
+                      <Markdown>{postContent?.Body}</Markdown>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
