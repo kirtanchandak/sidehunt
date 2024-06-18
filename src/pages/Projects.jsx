@@ -104,7 +104,7 @@ function Projects() {
                   key={project?.Title}
                   className="max-w-xs bg-white rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mt-5"
                 >
-                  <a href="#">
+                  <a href={`/project/${project?.ID}`}>
                     <img
                       className="rounded-t-lg"
                       src={`data:image/png;base64, ${img}`}
@@ -119,7 +119,7 @@ function Projects() {
                       <p>Builder - {project?.Name}</p>
                     </a>
                     <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-                      {project?.Body}
+                      {project?.Tagline}
                     </p>
                     <a
                       href="#"

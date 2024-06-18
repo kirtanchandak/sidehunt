@@ -9,6 +9,7 @@ import Projects from "./pages/Projects.jsx";
 import NewProject from "./pages/NewProject.jsx";
 import Layout from "./components/Layout.jsx";
 import { Toaster } from "react-hot-toast";
+import Project from "./pages/Project.jsx";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: "/new-project",
         element: <NewProject />,
+      },
+      {
+        path: "/project/:id",
+        element: <Project />,
       },
     ],
   },

@@ -17,6 +17,7 @@ function NewProject() {
   const [authorList, setAuthorList] = useState([]);
   const [value, setValue] = React.useState("**Hello world!!!**");
   const [name, setName] = useState("");
+  const [tagline, setTagline] = useState("");
 
   const activeAddress = useActiveAddress();
 
@@ -117,6 +118,7 @@ function NewProject() {
           { name: "Content-Type", value: "text/html" },
           { name: "Title", value: title },
           { name: "ProjectUrl", value: projectUrl },
+          { name: "Tagline", value: tagline },
         ],
         data: desc,
         signer: createDataItemSigner(window.arweaveWallet),
@@ -163,6 +165,22 @@ function NewProject() {
                   className="bg-gray-50 border border-gray-300  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   onChange={(e) => setTitle(e.target.value)}
                   value={title}
+                />
+              </div>
+
+              <div className="mb-5">
+                <label
+                  htmlFor="base-input"
+                  className="block mb-2 text-sm font-medium text-white"
+                >
+                  Tagline
+                </label>
+                <input
+                  type="text"
+                  id="base-input"
+                  className="bg-gray-50 border border-gray-300  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  onChange={(e) => setTagline(e.target.value)}
+                  value={tagline}
                 />
               </div>
 
@@ -215,6 +233,13 @@ function NewProject() {
             You need to make sure if you are registered user before you submit a
             project
           </h1>
+          <input
+            type="text"
+            id="base-input"
+            className="bg-gray-50 border border-gray-300  text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            onChange={(e) => setName(e.target.value)}
+            value={name}
+          />
           <div>
             <button className="bg-[#4678F4] p-2" onClick={registerAuthor}>
               Register
